@@ -21,7 +21,18 @@ function CharacterLoadouts:equipSet(set)
 end
 
 function CharacterLoadouts:getTalents()
-   --
+   local talents = {}
+
+   local i = 0
+   while(i < 7) do
+      local row = i + 1
+      local b,column = GetTalentTierInfo(row, 1)
+      local talentId = GetTalentInfo(row, column, 1)
+      talents[i] = talentId
+      i = i + 1
+   end
+
+   return talents
 end
 
 function CharacterLoadouts:equipTalents(talents)
