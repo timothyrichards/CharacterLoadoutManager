@@ -1,6 +1,9 @@
 CharacterLoadouts = LibStub("AceAddon-3.0"):NewAddon("CharacterLoadouts")
+AceDB = LibStub("AceDB-3.0"):New("")
 AceConsole = LibStub("AceConsole-3.0")
 AceGUI = LibStub("AceGUI-3.0")
+AceConfig = LibStub("AceConfig-3.0")
+AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
 function CharacterLoadouts:getSets()
    local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
@@ -70,7 +73,7 @@ end
 
 function CharacterLoadouts:OnInitialize()
    AceConsole:Print("<Character Loadouts> Character Loadouts addon has loaded!");
-   --AceConsole:RegisterChatCommand("cls", "openSettings")
+   --AceConsole:RegisterChatCommand("cls", "CharacterLoadouts:openSettings")
    CharacterLoadouts:openSettings()
 end
 
