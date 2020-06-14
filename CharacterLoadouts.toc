@@ -1,7 +1,8 @@
 ## Interface: 80300
 ## Title: Character Loadouts
-## Notes: Helps players create loadouts to manage essences, talents, and gear
 ## Author: ScarletPaladin
+## Notes: Helps players create loadouts to manage essences, talents, and gear
 ## Version: 1.0
-## SavedVariablesPerCharacter: characterLoadouts
+
+embeds.xml
 CharacterLoadouts.lua
