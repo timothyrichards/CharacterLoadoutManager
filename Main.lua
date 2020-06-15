@@ -37,10 +37,10 @@ end
 
 function CharacterLoadouts:openSettings()
     local frame = self.gui:Create("Frame")
-    frame:SetTitle("Character Loadouts Settings")
+    frame:SetTitle("Character Loadouts")
     frame:SetStatusText("Remember to make sure you're in a rested area!")
     frame:SetCallback("OnClose", function(widget) self.gui:Release(widget) end)
-    frame:SetWidth("500")
+    frame:SetWidth("475")
     frame:SetLayout("Fill")
 
     local tab = self.gui:Create("TabGroup")
