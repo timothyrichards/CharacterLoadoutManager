@@ -58,7 +58,7 @@ function CharacterLoadouts:equipLoadout(loadout)
    self:equipTalents(loadout.talents)
    self:equipEssences(loadout.essences)
 
-   self:Print:Print("Equipping your character loadout...")
+   self:Print("Equipping your character loadout...")
 end
 
 function CharacterLoadouts:saveLoadout()
@@ -68,5 +68,5 @@ function CharacterLoadouts:saveLoadout()
       essences = self:getEssences()
    }
 
-   self:Print:Print("Saving your character loadout...")
+   self:Print("Saving your character loadout...")
 end
