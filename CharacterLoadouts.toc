@@ -3,9 +3,9 @@
 ## Author: ScarletPaladin
 ## Notes: Helps players create loadouts to manage essences, talents, and gear
 ## Version: 1.0
-## SavedVariables: characterLoadouts
+## SavedVariables: CharacterLoadouts
 
 embeds.xml
-clInit.lua
-clLib.lua
-clMain.lua
+Init.lua
+Lib.lua
+Main.lua

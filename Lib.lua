@@ -1,12 +1,13 @@
-function CharacterLoadouts:getSets()
+function CharacterLoadouts:getSet()
    local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
    local equipmentSets = {}
 
    for k,v in pairs(equipmentSetIDs) do
-      equipmentSets[k] = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetIDs[k])
+      local name, icon, id, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetIDs[k])
+      if isEquipped then
+         return id
+      end
    end
-
-   return equipmentSets
 end
 
 function CharacterLoadouts:equipSet(set)
@@ -53,7 +54,19 @@ function CharacterLoadouts:equipEssences(essences)
 end
 
 function CharacterLoadouts:equipLoadout(loadout)
-   CharacterLoadouts:equipSet(loadout["set"])
-   CharacterLoadouts:equipTalents(loadout["talents"])
-   CharacterLoadouts:equipEssences(loadout["essences"])
+   self:equipSet(loadout.set)
+   self:equipTalents(loadout.talents)
+   self:equipEssences(loadout.essences)
+
+   self:Print:Print("Equipping your character loadout...")
+end
+
+function CharacterLoadouts:saveLoadout()
+   self.db.profile.loadout = {
+      set = self:getSet(),
+      talents = self:getTalents(),
+      essences = self:getEssences()
+   }
+
+   self:Print:Print("Saving your character loadout...")
 end
