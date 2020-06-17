@@ -1,4 +1,4 @@
-function CharacterLoadouts:getSet()
+function CharacterLoadoutManager:getSet()
    local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
    local equipmentSets = {}
 
@@ -10,11 +10,11 @@ function CharacterLoadouts:getSet()
    end
 end
 
-function CharacterLoadouts:equipSet(set)
+function CharacterLoadoutManager:equipSet(set)
    C_EquipmentSet.UseEquipmentSet(set)
 end
 
-function CharacterLoadouts:getTalents()
+function CharacterLoadoutManager:getTalents()
    local talents = {}
 
    local i = 0
@@ -29,13 +29,13 @@ function CharacterLoadouts:getTalents()
    return talents
 end
 
-function CharacterLoadouts:equipTalents(talents)
+function CharacterLoadoutManager:equipTalents(talents)
    for i, talent in pairs(talents) do
       LearnTalent(talent)
    end
 end
 
-function CharacterLoadouts:getEssences()
+function CharacterLoadoutManager:getEssences()
    return {
       C_AzeriteEssence.GetMilestoneEssence(115),
       C_AzeriteEssence.GetMilestoneEssence(116),
@@ -44,7 +44,7 @@ function CharacterLoadouts:getEssences()
    }
 end
 
-function CharacterLoadouts:equipEssences(essences)
+function CharacterLoadoutManager:equipEssences(essences)
    local heartSlotIds = { 115, 116, 117, 119 }
    local id
 
@@ -53,7 +53,7 @@ function CharacterLoadouts:equipEssences(essences)
    end;
 end
 
-function CharacterLoadouts:equipLoadout()
+function CharacterLoadoutManager:equipLoadout()
    local loadout = self.db.profile.loadout
 
    self:equipSet(loadout.set)
@@ -63,7 +63,7 @@ function CharacterLoadouts:equipLoadout()
    self:Print("Equipping your character loadout: '" + self.db:GetCurrentProfile() + "'")
 end
 
-function CharacterLoadouts:saveLoadout()
+function CharacterLoadoutManager:saveLoadout()
    self.db.profile.loadout = {
       set = self:getSet(),
       talents = self:getTalents(),

@@ -1,4 +1,4 @@
-CharacterLoadouts = LibStub("AceAddon-3.0"):NewAddon("CharacterLoadouts")
+CharacterLoadoutManager = LibStub("AceAddon-3.0"):NewAddon("CharacterLoadoutManager")
 cl_AceDB = LibStub("AceDB-3.0")
 cl_AceDBOptions = LibStub("AceDBOptions-3.0")
 cl_AceConsole = LibStub("AceConsole-3.0")

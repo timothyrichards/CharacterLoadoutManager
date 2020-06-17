@@ -1,5 +1,5 @@
 ## Interface: 80300
-## Title: Character Loadouts
+## Title: Character Loadout Manager
 ## Author: ScarletPaladin
 ## Notes: Helps players create loadouts to manage essences, talents, and gear
 ## Version: 1.0
@@ -9,4 +9,4 @@ embeds.xml
 Modules\Init.lua
 Modules\LoadoutManager.lua
 
-CharacterLoadouts.lua
+CharacterLoadoutManager.lua

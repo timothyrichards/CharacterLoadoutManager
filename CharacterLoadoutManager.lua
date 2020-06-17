@@ -1,4 +1,4 @@
-function CharacterLoadouts:OnInitialize()
+function CharacterLoadoutManager:OnInitialize()
     cl_AceConsole:Embed(self)
     self.config = cl_AceConfig
     self.configDialog = cl_AceConfigDialog
@@ -6,7 +6,7 @@ function CharacterLoadouts:OnInitialize()
     self.dbOptions = cl_AceDBOptions
 
     self.options = {
-        name = "Character Loadouts",
+        name = "Character Loadout Manager",
         handler = self,
         type = "group",
         args = {
@@ -16,7 +16,7 @@ function CharacterLoadouts:OnInitialize()
 --                order = 0,
 --                args = {
 --                    p1 = {
---                        name = "Hello and welcome to the Character Loadouts add-on! This add-on is pretty simple, you'll head over to the profiles page and make a new profile. Once you have the new profile you can go ahead and equip whatever equipment set, talents, and essences that you want to save. After you have everything setup, you can click the 'Save Loadout' button, and ta-da! Your loadout is now saved to your current profile. Now you can make multiple profiles and save your different loadouts to each of them.",
+--                        name = "Hello and welcome to the Character Loadout Manager add-on! This add-on is pretty simple, you'll head over to the profiles page and make a new profile. Once you have the new profile you can go ahead and equip whatever equipment set, talents, and essences that you want to save. After you have everything setup, you can click the 'Save Loadout' button, and ta-da! Your loadout is now saved to your current profile. Now you can make multiple profiles and save your different loadouts to each of them.",
 --                        type = "description",
 --                        fontSize = "medium",
 --                        order = 0
@@ -25,7 +25,7 @@ function CharacterLoadouts:OnInitialize()
 --            }
         },
     }
-    self.config:RegisterOptionsTable("CharacterLoadouts", self.options)
+    self.config:RegisterOptionsTable("CharacterLoadoutManager", self.options)
 
     self.db = cl_AceDB:New("CharacterLoadoutsDB")
     self.db.RegisterCallback(self, "OnProfileChanged", "equipLoadout")
@@ -52,14 +52,14 @@ function CharacterLoadouts:OnInitialize()
         func = function() self:saveLoadout() end,
     }
 
-    self:RegisterChatCommand("cls", function() self.configDialog:Open("CharacterLoadouts") end)
-    self:Print("Character Loadouts addon has loaded!");
+    self:RegisterChatCommand("clm", function() self.configDialog:Open("CharacterLoadoutManager") end)
+    self:Print("Character Loadout Manager addon has loaded!");
 end
 
-function CharacterLoadouts:OnEnable()
+function CharacterLoadoutManager:OnEnable()
     -- Called when the addon is enabled
 end
 
-function CharacterLoadouts:OnDisable()
+function CharacterLoadoutManager:OnDisable()
     -- Called when the addon is disabled
 end
