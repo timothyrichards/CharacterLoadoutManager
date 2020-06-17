@@ -53,7 +53,7 @@ function CharacterLoadoutManager:OnInitialize()
     }
 
     self:RegisterChatCommand("clm", function() self.configDialog:Open("CharacterLoadoutManager") end)
-    self:Print("Character Loadout Manager addon has loaded!");
+    self:Print("Character Loadout Manager addon has loaded! Use the command /clm to access it.");
 end
 
 function CharacterLoadoutManager:OnEnable()
