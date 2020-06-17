@@ -53,12 +53,14 @@ function CharacterLoadouts:equipEssences(essences)
    end;
 end
 
-function CharacterLoadouts:equipLoadout(loadout)
+function CharacterLoadouts:equipLoadout()
+   local loadout = self.db.profile.loadout
+
    self:equipSet(loadout.set)
    self:equipTalents(loadout.talents)
    self:equipEssences(loadout.essences)
 
-   self:Print("Equipping your character loadout...")
+   self:Print("Equipping your character loadout: '" + self.db:GetCurrentProfile() + "'")
 end
 
 function CharacterLoadouts:saveLoadout()
@@ -68,5 +70,5 @@ function CharacterLoadouts:saveLoadout()
       essences = self:getEssences()
    }
 
-   self:Print("Saving your character loadout...")
+   self:Print("Saving your character loadout: '" + self.db:GetCurrentProfile() + "'")
 end
