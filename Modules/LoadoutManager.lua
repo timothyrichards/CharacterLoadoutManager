@@ -1,6 +1,5 @@
 function CharacterLoadoutManager:getSet()
    local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
-   local equipmentSets = {}
 
    for k,v in pairs(equipmentSetIDs) do
       local name, icon, id, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetIDs[k])
@@ -11,7 +10,11 @@ function CharacterLoadoutManager:getSet()
 end
 
 function CharacterLoadoutManager:equipSet(set)
-   C_EquipmentSet.UseEquipmentSet(set)
+   local equippedSet = self:getSet()
+
+   if equippedSet ~= set then
+      C_EquipmentSet.UseEquipmentSet(set)
+   end
 end
 
 function CharacterLoadoutManager:getTalents()
@@ -30,8 +33,28 @@ function CharacterLoadoutManager:getTalents()
 end
 
 function CharacterLoadoutManager:equipTalents(talents)
-   for i, talent in pairs(talents) do
-      LearnTalent(talent)
+   for k, talent in pairs(talents) do
+      local row = k + 1
+      local b,column = GetTalentTierInfo(row, 1)
+      local talentId = GetTalentInfo(row, column, 1)
+
+      if talentId ~= talent then
+         LearnTalent(talent)
+      end
+   end
+end
+
+function CharacterLoadoutManager:getPvPTalents()
+   return C_SpecializationInfo.GetAllSelectedPvpTalentIDs()
+end
+
+function CharacterLoadoutManager:equipPvPTalents(pvpTalents)
+   for k, talent in pairs(pvpTalents) do
+      local talentId = C_SpecializationInfo.GetPvpTalentSlotInfo(k).selectedTalentID
+
+      if talentId ~= talent then
+         LearnPvpTalent(talent, k)
+      end
    end
 end
 
@@ -50,25 +73,32 @@ function CharacterLoadoutManager:equipEssences(essences)
 
    for k,v in pairs(essences) do
       C_AzeriteEssence.ActivateEssence(v, heartSlotIds[k])
-   end;
+   end
 end
 
 function CharacterLoadoutManager:equipLoadout()
    local loadout = self.db.profile.loadout
+   --   local id, name, mult = GetRestState()
 
    self:equipSet(loadout.set)
+   --   if name == "Rested" then
    self:equipTalents(loadout.talents)
+   self:equipPvPTalents(loadout.pvpTalents)
    self:equipEssences(loadout.essences)
+   --   else
+   --      self:Print("<WARNING> : We couldn't equip your talents or essences : <WARNING>")
+   --   end
 
-   self:Print("Equipping your character loadout: '" + self.db:GetCurrentProfile() + "'")
+   self:Print("Equipping your character loadout: '" .. self.db:GetCurrentProfile() .. "'")
 end
 
 function CharacterLoadoutManager:saveLoadout()
    self.db.profile.loadout = {
       set = self:getSet(),
       talents = self:getTalents(),
+      pvpTalents = self:getPvPTalents(),
       essences = self:getEssences()
    }
 
-   self:Print("Saving your character loadout: '" + self.db:GetCurrentProfile() + "'")
+   self:Print("Saving your character loadout: '" .. self.db:GetCurrentProfile() .. "'")
 end
