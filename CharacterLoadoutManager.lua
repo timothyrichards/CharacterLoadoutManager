@@ -1,15 +1,32 @@
 function CharacterLoadoutManager:GetWelcomePage()
     return {
-        name = "(coming soon!) Welcome",
+        name = "Welcome",
         type = "group",
         order = 0,
-        disabled = true,
         args = {
+            h1 = {
+                name = "Welcome to the Character Loadout Manager add-on!",
+                type = "description",
+                fontSize = "large",
+                order = 0,
+            },
+            header = {
+                name = "",
+                type = "header",
+                width = "full",
+                order = 1,
+            },
             p1 = {
-                name = "Hello and welcome to the Character Loadout Manager add-on! This add-on is pretty simple, you'll head over to the profiles page and make a new profile. Once you have the new profile you can go ahead and equip whatever equipment set, talents, and essences that you want to save. After you have everything setup, you can click the 'Save Loadout' button, and ta-da! Your loadout is now saved to your current profile. Now you can make multiple profiles and save your different loadouts to each of them.",
+                name = [[This add-on is pretty simple, you'll head over to the profiles page and make a new profile.
+
+Once you have the new profile you can go ahead and equip whatever equipment set, talents, and essences that you want to save.
+
+After you have everything setup, you can click the 'Save Loadout' button, and ta-da! Your loadout is now saved to your current profile.
+
+Now you can make multiple profiles and save your different loadouts to each of them.]],
                 type = "description",
                 fontSize = "medium",
-                order = 0
+                order = 2,
             },
         }
     }
@@ -17,7 +34,7 @@ end
 
 function CharacterLoadoutManager:GetLoadoutManagerPage()
     return {
-        name = "(coming soon!) Loadout Manager",
+        name = "Loadout Manager",
         type = "group",
         desc = "Equip/Save loadouts from your current profiled and see the details of what's part of your current loadout.",
         order = 1,
@@ -73,10 +90,10 @@ function CharacterLoadoutManager:OnInitialize()
     self.db = cl_AceDB:New("CharacterLoadoutsDB")
     self.db.RegisterCallback(self, "OnProfileChanged", "equipLoadout")
 
-    -- Inject equip and save loadout buttons to the profile page
+    -- Adds profile page to the options window
     self.options.args.profile = self.dbOptions:GetOptionsTable(self.db)
     self.options.args.profile.args.header = {
-        name = "Loadout Management",
+        name = "",
         type = "header",
         width = "full",
     }
