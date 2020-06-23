@@ -74,6 +74,15 @@ function CharacterLoadoutManager:OnInitialize()
     self.gui = cl_AceGUI
     self.dbOptions = cl_AceDBOptions
 
+    local button = CharacterLoadoutManager.gui:Create("Button")
+    button:SetText("CLM")
+    button:SetWidth(100)
+    button:SetCallback("OnClick", function() self:toggleDialog("CharacterLoadoutManager") end)
+    button.frame:ClearAllPoints()
+    button.frame:SetPoint("TOPLEFT", "PaperDollFrame", "TOPLEFT", 60, -30)
+    button.frame:SetParent("PaperDollFrame")
+    PaperDollFrame:HookScript("OnShow", function() button.frame:SetShown(PaperDollFrame:IsShown()) end)
+
     -- Register the options table
     self.options = {
         name = "Character Loadout Manager",
