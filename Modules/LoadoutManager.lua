@@ -102,3 +102,11 @@ function CharacterLoadoutManager:saveLoadout()
 
    self:Print("Saving your character loadout: '" .. self.db:GetCurrentProfile() .. "'")
 end
+
+function CharacterLoadoutManager:toggleDialog(name)
+   if self.configDialog.OpenFrames[name] then
+      self.configDialog:Close(name)
+   else
+      self.configDialog:Open(name)
+   end
+end
