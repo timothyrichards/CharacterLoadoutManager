@@ -36,15 +36,28 @@ function CharacterLoadoutManager:GetLoadoutManagerPage()
     return {
         name = "Loadout Manager",
         type = "group",
-        desc = "Equip/Save loadouts from your current profiled and see the details of what's part of your current loadout.",
+        desc = "Equip/Save loadouts from your current profile and see the details of what's saved to your current loadout.",
         order = 1,
-        disabled = true,
         args = {
+            clmButton = {
+                name = "Character Window Button",
+                desc = "After changing this setting you will need to perform a /reload for it to be in effect.",
+                type = "toggle",
+                order = 0,
+                get = function(info) return self.db.global.clmBtnEnabled end,
+                set = function(info,val) self.db.global.clmBtnEnabled = val end,
+            },
+            header1 = {
+                name = "Loadout Management",
+                type = "header",
+                width = "full",
+                order = 1,
+            },
             equip = {
                 name = "Equip Loadout",
                 desc = "Equips your loadout from your current profile",
                 width = "full",
-                order = 1,
+                order = 2,
                 type = "execute",
                 func = function() self:equipLoadout() end,
             },
@@ -52,15 +65,15 @@ function CharacterLoadoutManager:GetLoadoutManagerPage()
                 name = "Save Loadout",
                 desc = "Saves your loadout to your current profile",
                 width = "full",
-                order = 2,
+                order = 3,
                 type = "execute",
                 func = function() self:saveLoadout() end,
             },
-            header = {
+            header2 = {
                 name = "Loadout Details",
                 type = "header",
                 width = "full",
-                order = 3,
+                order = 4,
             },
         }
     }
@@ -73,15 +86,6 @@ function CharacterLoadoutManager:OnInitialize()
     self.configDialog = cl_AceConfigDialog
     self.gui = cl_AceGUI
     self.dbOptions = cl_AceDBOptions
-
-    local button = CharacterLoadoutManager.gui:Create("Button")
-    button:SetText("CLM")
-    button:SetWidth(100)
-    button:SetCallback("OnClick", function() self:toggleDialog("CharacterLoadoutManager") end)
-    button.frame:ClearAllPoints()
-    button.frame:SetPoint("TOPLEFT", "PaperDollFrame", "TOPLEFT", 60, -30)
-    button.frame:SetParent("PaperDollFrame")
-    PaperDollFrame:HookScript("OnShow", function() button.frame:SetShown(PaperDollFrame:IsShown()) end)
 
     -- Register the options table
     self.options = {
@@ -101,30 +105,22 @@ function CharacterLoadoutManager:OnInitialize()
 
     -- Adds profile page to the options window
     self.options.args.profile = self.dbOptions:GetOptionsTable(self.db)
-    self.options.args.profile.args.header = {
-        name = "",
-        type = "header",
-        width = "full",
-    }
-    self.options.args.profile.args.equip = {
-        name = "Equip Loadout",
-        desc = "Equips your loadout from the current profile",
-        width = "full",
-        order = 101,
-        type = "execute",
-        func = function() self:equipLoadout() end,
-    }
-    self.options.args.profile.args.save = {
-        name = "Save Loadout",
-        desc = "Saves your loadout to the current profile",
-        width = "full",
-        order = 102,
-        type = "execute",
-        func = function() self:saveLoadout() end,
-    }
 
     -- Register the /clm chat command and notify the plater that the addon has loaded
     self:RegisterChatCommand("clm", function() self.configDialog:Open("CharacterLoadoutManager") end)
+
+    -- Add button to character window if enabled
+    if (self.db.global.clmBtnEnabled) then
+        local button = CharacterLoadoutManager.gui:Create("Button")
+        button:SetText("CLM")
+        button:SetWidth(75)
+        button:SetCallback("OnClick", function() self:toggleDialog("CharacterLoadoutManager") end)
+        button.frame:ClearAllPoints()
+        button.frame:SetPoint("TOPLEFT", "PaperDollFrame", "TOPLEFT", 60, -30)
+        button.frame:SetParent("PaperDollFrame")
+        PaperDollFrame:HookScript("OnShow", function() button.frame:SetShown(PaperDollFrame:IsShown()) end)
+    end
+
     self:Print("Character Loadout Manager addon has loaded! Use the command /clm to access it.");
 end
 
