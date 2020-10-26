@@ -28,55 +28,159 @@ Now you can make multiple profiles and save your different loadouts to each of t
                 fontSize = "medium",
                 order = 2,
             },
+            header2 = {
+                name = "",
+                type = "header",
+                width = "full",
+                order = 3,
+            },
+            clmBtn = {
+                name = "Character Window Button",
+                desc = "After changing this setting you will need to perform a /reload for it to be in effect.",
+                type = "toggle",
+                width = 1.5,
+                order = 4,
+                get = function(info) return self.db.global.clmBtnEnabled end,
+                set = function(info,val) self.db.global.clmBtnEnabled = val end,
+            },
+            btnX = {
+                name = "Button X",
+                desc = "Must be a number, this is the X position of the button relative to the top left corner of the Character window. (Default: 60)",
+                type = "input",
+                width = 0.5,
+                order = 5,
+                get = function(info) return self.db.global.clmBtnX end,
+                set = function(info,val) self.db.global.clmBtnX = val, self.clmBtn.frame:SetPoint("TOPLEFT", "PaperDollFrame", "TOPLEFT", val, self.db.global.clmBtnY) end,
+            },
+            btnY = {
+                name = "Button Y",
+                desc = "Must be a number, this is the Y position of the button relative to the top left corner of the Character window. (Default: -30)",
+                type = "input",
+                width = 0.5,
+                order = 6,
+                get = function(info) return self.db.global.clmBtnY end,
+                set = function(info,val) self.db.global.clmBtnY = val, self.clmBtn.frame:SetPoint("TOPLEFT", "PaperDollFrame", "TOPLEFT", self.db.global.clmBtnX, val) end,
+            },
         }
     }
 end
 
 function CharacterLoadoutManager:GetLoadoutManagerPage()
-    return {
-        name = "Loadout Manager",
+    local loadoutDetails = {
+        name = "Loadout Details",
         type = "group",
-        desc = "Equip/Save loadouts from your current profile and see the details of what's saved to your current loadout.",
+        desc = "View the details of your current loadout.",
         order = 1,
         args = {
-            clmButton = {
-                name = "Character Window Button",
-                desc = "After changing this setting you will need to perform a /reload for it to be in effect.",
-                type = "toggle",
-                order = 0,
-                get = function(info) return self.db.global.clmBtnEnabled end,
-                set = function(info,val) self.db.global.clmBtnEnabled = val end,
-            },
-            header1 = {
-                name = "Loadout Management",
-                type = "header",
-                width = "full",
-                order = 1,
-            },
             equip = {
                 name = "Equip Loadout",
                 desc = "Equips your loadout from your current profile",
-                width = "full",
-                order = 2,
+                width = 1.35,
+                order = 1,
                 type = "execute",
-                func = function() self:equipLoadout() end,
+                func = function() self:EquipLoadout() end,
             },
             save = {
                 name = "Save Loadout",
                 desc = "Saves your loadout to your current profile",
-                width = "full",
-                order = 3,
+                width = 1.35,
+                order = 2,
                 type = "execute",
-                func = function() self:saveLoadout() end,
-            },
-            header2 = {
-                name = "Loadout Details",
-                type = "header",
-                width = "full",
-                order = 4,
+                func = function() self:SaveLoadout() end,
             },
         }
     }
+    local loadout = self.db.profile.loadout
+    local talents = "";
+    local pvpTalents = "";
+    local essences = "";
+
+    if loadout == nil then
+        self:Print("You do not have a saved loadout for this profile, please go to the Loadout Manager tab and click 'Save Loadout'")
+        loadoutDetails.args.p = {
+            name = "You don't have any information saved to this loadout yet.",
+            type = "description",
+            fontSize = "medium",
+            order = 4,
+        }
+        return loadoutDetails
+    else
+        for k,v in pairs(loadout.talents) do
+            local talentID, name = GetTalentInfoByID(v, GetActiveSpecGroup())
+            talents = talents .. name
+            if k ~= table.getn(loadout.talents) then
+                talents = talents .. ", "
+            end
+        end
+        for k,v in pairs(loadout.pvpTalents) do
+            local talentID, name = GetPvpTalentInfoByID(v, GetActiveSpecGroup())
+            pvpTalents = pvpTalents .. name
+            if k ~= table.getn(loadout.pvpTalents) then
+                pvpTalents = pvpTalents .. ", "
+            end
+        end
+        for k,v in pairs(loadout.essences) do
+            local info = C_AzeriteEssence.GetEssenceInfo(v)
+            essences = essences .. info.name
+            if k ~= table.getn(loadout.essences) then
+                essences = essences .. ", "
+            end
+        end
+        loadoutDetails.args.header = {
+            name = "Talents",
+            type = "header",
+            width = "full",
+            order = 3,
+        }
+        loadoutDetails.args.talents = {
+            name = talents,
+            type = "description",
+            fontSize = "medium",
+            order = 4,
+        }
+        loadoutDetails.args.header2 = {
+            name = "PvP Talents",
+            type = "header",
+            width = "full",
+            order = 5,
+        }
+        loadoutDetails.args.pvpTalents = {
+            name = pvpTalents,
+            type = "description",
+            fontSize = "medium",
+            order = 6,
+        }
+        loadoutDetails.args.header3 = {
+            name = "Essences",
+            type = "header",
+            width = "full",
+            order = 7,
+        }
+        loadoutDetails.args.essences = {
+            name = essences,
+            type = "description",
+            fontSize = "medium",
+            order = 8,
+        }
+    end
+
+    return loadoutDetails
+end
+
+function CharacterLoadoutManager:CreateCLMButton()
+    self.clmBtn = self.gui:Create("Button")
+    self.clmBtn:SetText("CLM")
+    self.clmBtn:SetWidth(60)
+    self.clmBtn:SetCallback("OnClick", function() self:ToggleDialog("CharacterLoadoutManager") end)
+    self.clmBtn.frame:ClearAllPoints()
+    self.clmBtn.frame:SetPoint("TOPLEFT", "PaperDollFrame", "TOPLEFT", self.db.global.clmBtnX, self.db.global.clmBtnY)
+    self.clmBtn.frame:SetParent("PaperDollFrame")
+    PaperDollFrame:HookScript("OnShow", function() self.clmBtn.frame:SetShown(PaperDollFrame:IsShown()) end)
+end
+
+function CharacterLoadoutManager:RefreshConfig()
+    self.options.args.loadoutManager = self:GetLoadoutManagerPage()
+    cl_AceConfigRegistry:NotifyChange("CharacterLoadoutManager")
 end
 
 function CharacterLoadoutManager:OnInitialize()
@@ -87,6 +191,23 @@ function CharacterLoadoutManager:OnInitialize()
     self.gui = cl_AceGUI
     self.dbOptions = cl_AceDBOptions
 
+    -- Set up the database
+    self.db = cl_AceDB:New("CharacterLoadoutsDB")
+    self.db.RegisterCallback(self, "OnProfileChanged", "EquipLoadout")
+    self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
+    self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
+
+    -- Initialize default button values
+    if self.db.global.clmBtnEnabled == nil then
+        self.db.global.clmBtnEnabled = true
+    end
+    if self.db.global.clmBtnX == nil then
+        self.db.global.clmBtnX = 60
+    end
+    if self.db.global.clmBtnY == nil then
+        self.db.global.clmBtnY = -30
+    end
+
     -- Register the options table
     self.options = {
         name = "Character Loadout Manager",
@@ -95,30 +216,17 @@ function CharacterLoadoutManager:OnInitialize()
         args = {
             welcome = self:GetWelcomePage(),
             loadoutManager = self:GetLoadoutManagerPage(),
+            profile = self.dbOptions:GetOptionsTable(self.db),
         },
     }
     self.config:RegisterOptionsTable("CharacterLoadoutManager", self.options)
-
-    -- Set up the database
-    self.db = cl_AceDB:New("CharacterLoadoutsDB")
-    self.db.RegisterCallback(self, "OnProfileChanged", "equipLoadout")
-
-    -- Adds profile page to the options window
-    self.options.args.profile = self.dbOptions:GetOptionsTable(self.db)
 
     -- Register the /clm chat command and notify the plater that the addon has loaded
     self:RegisterChatCommand("clm", function() self.configDialog:Open("CharacterLoadoutManager") end)
 
     -- Add button to character window if enabled
     if (self.db.global.clmBtnEnabled) then
-        local button = CharacterLoadoutManager.gui:Create("Button")
-        button:SetText("CLM")
-        button:SetWidth(75)
-        button:SetCallback("OnClick", function() self:toggleDialog("CharacterLoadoutManager") end)
-        button.frame:ClearAllPoints()
-        button.frame:SetPoint("TOPLEFT", "PaperDollFrame", "TOPLEFT", 60, -30)
-        button.frame:SetParent("PaperDollFrame")
-        PaperDollFrame:HookScript("OnShow", function() button.frame:SetShown(PaperDollFrame:IsShown()) end)
+        self:CreateCLMButton()
     end
 
     self:Print("Character Loadout Manager addon has loaded! Use the command /clm to access it.");

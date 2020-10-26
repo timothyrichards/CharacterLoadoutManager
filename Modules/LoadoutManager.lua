@@ -1,4 +1,4 @@
-function CharacterLoadoutManager:getSet()
+function CharacterLoadoutManager:GetSet()
    local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
 
    for k,v in pairs(equipmentSetIDs) do
@@ -9,20 +9,20 @@ function CharacterLoadoutManager:getSet()
    end
 end
 
-function CharacterLoadoutManager:equipSet(set)
-   local equippedSet = self:getSet()
+function CharacterLoadoutManager:EquipSet(set)
+   local equippedSet = self:GetSet()
 
    if equippedSet ~= set then
       C_EquipmentSet.UseEquipmentSet(set)
    end
 end
 
-function CharacterLoadoutManager:getTalents()
+function CharacterLoadoutManager:GetTalents()
    local talents = {}
 
-   local i = 0
-   while(i < 7) do
-      local row = i + 1
+   local i = 1
+   while(i <= 7) do
+      local row = i
       local b,column = GetTalentTierInfo(row, 1)
       local talentId = GetTalentInfo(row, column, 1)
       talents[i] = talentId
@@ -32,7 +32,7 @@ function CharacterLoadoutManager:getTalents()
    return talents
 end
 
-function CharacterLoadoutManager:equipTalents(talents)
+function CharacterLoadoutManager:EquipTalents(talents)
    for k, talent in pairs(talents) do
       local row = k + 1
       local b,column = GetTalentTierInfo(row, 1)
@@ -44,11 +44,11 @@ function CharacterLoadoutManager:equipTalents(talents)
    end
 end
 
-function CharacterLoadoutManager:getPvPTalents()
+function CharacterLoadoutManager:GetPvPTalents()
    return C_SpecializationInfo.GetAllSelectedPvpTalentIDs()
 end
 
-function CharacterLoadoutManager:equipPvPTalents(pvpTalents)
+function CharacterLoadoutManager:EquipPvPTalents(pvpTalents)
    for k, talent in pairs(pvpTalents) do
       local talentId = C_SpecializationInfo.GetPvpTalentSlotInfo(k).selectedTalentID
 
@@ -58,7 +58,7 @@ function CharacterLoadoutManager:equipPvPTalents(pvpTalents)
    end
 end
 
-function CharacterLoadoutManager:getEssences()
+function CharacterLoadoutManager:GetEssences()
    return {
       C_AzeriteEssence.GetMilestoneEssence(115),
       C_AzeriteEssence.GetMilestoneEssence(116),
@@ -67,7 +67,7 @@ function CharacterLoadoutManager:getEssences()
    }
 end
 
-function CharacterLoadoutManager:equipEssences(essences)
+function CharacterLoadoutManager:EquipEssences(essences)
    local heartSlotIds = { 115, 116, 117, 119 }
    local id
 
@@ -76,34 +76,40 @@ function CharacterLoadoutManager:equipEssences(essences)
    end
 end
 
-function CharacterLoadoutManager:equipLoadout()
+function CharacterLoadoutManager:EquipLoadout()
    local loadout = self.db.profile.loadout
-   --   local id, name, mult = GetRestState()
 
-   self:equipSet(loadout.set)
-   --   if name == "Rested" then
-   self:equipTalents(loadout.talents)
-   self:equipPvPTalents(loadout.pvpTalents)
-   self:equipEssences(loadout.essences)
-   --   else
-   --      self:Print("<WARNING> : We couldn't equip your talents or essences : <WARNING>")
-   --   end
+   if loadout == nil then
+      self:Print("You do not have a saved loadout for this profile, please go to the Loadout Manager tab and click 'Save Loadout'")
+      return
+   end
 
    self:Print("Equipping your character loadout: '" .. self.db:GetCurrentProfile() .. "'")
+   self:EquipSet(loadout.set)
+   if IsResting() then
+      self:EquipTalents(loadout.talents)
+      self:EquipPvPTalents(loadout.pvpTalents)
+      self:EquipEssences(loadout.essences)
+   else
+      self:Print("|cffFF0000!WARNING! : We couldn't equip your talents or Essences : !WARNING!")
+   end
+
+   self:RefreshConfig()
 end
 
-function CharacterLoadoutManager:saveLoadout()
+function CharacterLoadoutManager:SaveLoadout()
    self.db.profile.loadout = {
-      set = self:getSet(),
-      talents = self:getTalents(),
-      pvpTalents = self:getPvPTalents(),
-      essences = self:getEssences()
+      set = self:GetSet(),
+      talents = self:GetTalents(),
+      pvpTalents = self:GetPvPTalents(),
+      essences = self:GetEssences()
    }
 
    self:Print("Saving your character loadout: '" .. self.db:GetCurrentProfile() .. "'")
+   self:RefreshConfig()
 end
 
-function CharacterLoadoutManager:toggleDialog(name)
+function CharacterLoadoutManager:ToggleDialog(name)
    if self.configDialog.OpenFrames[name] then
       self.configDialog:Close(name)
    else
