@@ -38,7 +38,7 @@ Now you can make multiple profiles and save your different loadouts to each of t
                 name = "Character Window Button",
                 desc = "After changing this setting you will need to perform a /reload for it to be in effect.",
                 type = "toggle",
-                width = 1.5,
+                width = 1,
                 order = 4,
                 get = function(info) return self.db.global.clmBtnEnabled end,
                 set = function(info,val) self.db.global.clmBtnEnabled = val end,
@@ -75,7 +75,7 @@ function CharacterLoadoutManager:GetLoadoutManagerPage()
             equip = {
                 name = "Equip Loadout",
                 desc = "Equips your loadout from your current profile",
-                width = 1.35,
+                width = "Half",
                 order = 1,
                 type = "execute",
                 func = function() self:EquipLoadout() end,
@@ -83,7 +83,7 @@ function CharacterLoadoutManager:GetLoadoutManagerPage()
             save = {
                 name = "Save Loadout",
                 desc = "Saves your loadout to your current profile",
-                width = 1.35,
+                width = "Half",
                 order = 2,
                 type = "execute",
                 func = function() self:SaveLoadout() end,
@@ -101,67 +101,76 @@ function CharacterLoadoutManager:GetLoadoutManagerPage()
             name = "You don't have any information saved to this loadout yet.",
             type = "description",
             fontSize = "medium",
-            order = 4,
+            order = 3,
         }
         return loadoutDetails
     else
-        for k,v in pairs(loadout.talents) do
-            local talentID, name = GetTalentInfoByID(v, GetActiveSpecGroup())
-            talents = talents .. name
-            if k ~= table.getn(loadout.talents) then
-                talents = talents .. ", "
+        local order = 3;
+
+        if table.getn(loadout.talents) ~= 0 then
+            loadoutDetails.args.header = {
+                name = "Talents",
+                type = "header",
+                width = "full",
+                order = order,
+            }
+            for k,v in pairs(loadout.talents) do
+                order = order + 1;
+                local talentID, name, icon = GetTalentInfoByID(v, GetActiveSpecGroup())
+                loadoutDetails.args[name] = {
+                    name = name,
+                    type = "description",
+                    fontSize = "medium",
+                    image = icon,
+                    order = order,
+                }
             end
         end
-        for k,v in pairs(loadout.pvpTalents) do
-            local talentID, name = GetPvpTalentInfoByID(v, GetActiveSpecGroup())
-            pvpTalents = pvpTalents .. name
-            if k ~= table.getn(loadout.pvpTalents) then
-                pvpTalents = pvpTalents .. ", "
+
+        if table.getn(loadout.pvpTalents) ~= 0 then
+            order = order + 1;
+            loadoutDetails.args.header2 = {
+                name = "PvP Talents",
+                type = "header",
+                width = "full",
+                order = order,
+            }
+            for k,v in pairs(loadout.pvpTalents) do
+                order = order + 1;
+                local talentID, name, icon = GetPvpTalentInfoByID(v, GetActiveSpecGroup())
+                loadoutDetails.args[name] = {
+                    name = name,
+                    type = "description",
+                    fontSize = "medium",
+                    image = icon,
+                    order = order,
+                }
             end
         end
-        for k,v in pairs(loadout.essences) do
-            local info = C_AzeriteEssence.GetEssenceInfo(v)
-            essences = essences .. info.name
-            if k ~= table.getn(loadout.essences) then
-                essences = essences .. ", "
+
+        if table.getn(loadout.essences) ~= 0 then
+            order = order + 1;
+            loadoutDetails.args.header3 = {
+                name = "Essences",
+                type = "header",
+                width = "full",
+                order = order,
+            }
+            for k,v in pairs(loadout.essences) do
+                order = order + 1;
+                local info = C_AzeriteEssence.GetEssenceInfo(v)
+                if info == nil then
+                    return
+                end
+                loadoutDetails.args[info.name] = {
+                    name = info.name,
+                    type = "description",
+                    fontSize = "medium",
+                    image = info.icon,
+                    order = order,
+                }
             end
         end
-        loadoutDetails.args.header = {
-            name = "Talents",
-            type = "header",
-            width = "full",
-            order = 3,
-        }
-        loadoutDetails.args.talents = {
-            name = talents,
-            type = "description",
-            fontSize = "medium",
-            order = 4,
-        }
-        loadoutDetails.args.header2 = {
-            name = "PvP Talents",
-            type = "header",
-            width = "full",
-            order = 5,
-        }
-        loadoutDetails.args.pvpTalents = {
-            name = pvpTalents,
-            type = "description",
-            fontSize = "medium",
-            order = 6,
-        }
-        loadoutDetails.args.header3 = {
-            name = "Essences",
-            type = "header",
-            width = "full",
-            order = 7,
-        }
-        loadoutDetails.args.essences = {
-            name = essences,
-            type = "description",
-            fontSize = "medium",
-            order = 8,
-        }
     end
 
     return loadoutDetails
@@ -192,7 +201,7 @@ function CharacterLoadoutManager:OnInitialize()
     self.dbOptions = cl_AceDBOptions
 
     -- Set up the database
-    self.db = cl_AceDB:New("CharacterLoadoutsDB")
+    self.db = cl_AceDB:New("CharacterLoadoutsDB", {}, true)
     self.db.RegisterCallback(self, "OnProfileChanged", "EquipLoadout")
     self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
     self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
