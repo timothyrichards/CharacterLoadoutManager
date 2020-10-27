@@ -66,6 +66,7 @@ Now you can make multiple profiles and save your different loadouts to each of t
 end
 
 function CharacterLoadoutManager:GetLoadoutManagerPage()
+    local loadout = self.db.profile.loadout
     local loadoutDetails = {
         name = "Loadout Details",
         type = "group",
@@ -88,32 +89,47 @@ function CharacterLoadoutManager:GetLoadoutManagerPage()
                 type = "execute",
                 func = function() self:SaveLoadout() end,
             },
+            p = {
+                name = "You don't have any information saved to this loadout yet.",
+                type = "description",
+                fontSize = "medium",
+                hidden = true,
+                order = 3,
+            },
+            header = {
+                name = "Talents",
+                type = "header",
+                width = "full",
+                hidden = true,
+                order = 4,
+            },
+            header2 = {
+                name = "PvP Talents",
+                type = "header",
+                width = "full",
+                hidden = true,
+                order = 5,
+            },
+            header3 = {
+                name = "Essences",
+                type = "header",
+                width = "full",
+                hidden = true,
+                order = 6,
+            }
         }
     }
-    local loadout = self.db.profile.loadout
-    local talents = "";
-    local pvpTalents = "";
-    local essences = "";
 
     if loadout == nil then
         self:Print("You do not have a saved loadout for this profile, please go to the Loadout Manager tab and click 'Save Loadout'")
-        loadoutDetails.args.p = {
-            name = "You don't have any information saved to this loadout yet.",
-            type = "description",
-            fontSize = "medium",
-            order = 3,
-        }
+        loadoutDetails.args.p.hidden = false
         return loadoutDetails
     else
         local order = 3;
 
         if table.getn(loadout.talents) ~= 0 then
-            loadoutDetails.args.header = {
-                name = "Talents",
-                type = "header",
-                width = "full",
-                order = order,
-            }
+            loadoutDetails.args.header.hidden = false
+            loadoutDetails.args.header.order = order
             for k,v in pairs(loadout.talents) do
                 order = order + 1;
                 local talentID, name, icon = GetTalentInfoByID(v, GetActiveSpecGroup())
@@ -129,12 +145,8 @@ function CharacterLoadoutManager:GetLoadoutManagerPage()
 
         if table.getn(loadout.pvpTalents) ~= 0 then
             order = order + 1;
-            loadoutDetails.args.header2 = {
-                name = "PvP Talents",
-                type = "header",
-                width = "full",
-                order = order,
-            }
+            loadoutDetails.args.header2.hidden = false
+            loadoutDetails.args.header2.order = order
             for k,v in pairs(loadout.pvpTalents) do
                 order = order + 1;
                 local talentID, name, icon = GetPvpTalentInfoByID(v, GetActiveSpecGroup())
@@ -150,12 +162,8 @@ function CharacterLoadoutManager:GetLoadoutManagerPage()
 
         if table.getn(loadout.essences) ~= 0 then
             order = order + 1;
-            loadoutDetails.args.header3 = {
-                name = "Essences",
-                type = "header",
-                width = "full",
-                order = order,
-            }
+            loadoutDetails.args.header3.hidden = false
+            loadoutDetails.args.header3.order = order
             for k,v in pairs(loadout.essences) do
                 order = order + 1;
                 local info = C_AzeriteEssence.GetEssenceInfo(v)
@@ -216,7 +224,9 @@ function CharacterLoadoutManager:OnInitialize()
     if self.db.global.clmBtnY == nil then
         self.db.global.clmBtnY = -30
     end
+end
 
+function CharacterLoadoutManager:OnEnable()
     -- Register the options table
     self.options = {
         name = "Character Loadout Manager",
@@ -239,10 +249,6 @@ function CharacterLoadoutManager:OnInitialize()
     end
 
     self:Print("Character Loadout Manager addon has loaded! Use the command /clm to access it.");
-end
-
-function CharacterLoadoutManager:OnEnable()
-    -- Called when the addon is enabled
 end
 
 function CharacterLoadoutManager:OnDisable()
