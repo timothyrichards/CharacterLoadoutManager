@@ -1,4 +1,4 @@
-## Interface: 90001
+## Interface: 90002
 ## Title: Character Loadout Manager
 ## Author: ScarletPaladin
 ## Notes: Helps players create loadouts to manage essences, talents, and gear
