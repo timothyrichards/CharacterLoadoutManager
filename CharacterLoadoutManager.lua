@@ -32,7 +32,14 @@ function CharacterLoadoutManager:OnInitialize()
     self.dbOptions = cl_AceDBOptions
 
     -- Set up the database
-    self.db = cl_AceDB:New("CharacterLoadoutsDB", {}, true)
+    local defaults = {
+        global = {
+            clmBtnEnabled = true,
+            clmBtnX = 60,
+            clmBtnY = -30,
+        }
+    }
+    self.db = cl_AceDB:New("CharacterLoadoutsDB", defaults, true)
     self.db.RegisterCallback(self, "OnProfileChanged", "EquipLoadout")
     self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
     self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")

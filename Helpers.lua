@@ -1,11 +1,3 @@
-function CharacterLoadoutManager:GetDefaultValue(value, default)
-    if value ~= nil then
-        return value
-    end
-
-    return default;
-end
-
 function CharacterLoadoutManager:GetSet()
     local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
 
