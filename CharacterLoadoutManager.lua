@@ -36,17 +36,6 @@ function CharacterLoadoutManager:OnInitialize()
     self.db.RegisterCallback(self, "OnProfileChanged", "EquipLoadout")
     self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
     self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
-
-    -- Initialize default button values
-    if self.db.global.clmBtnEnabled == nil then
-        self.db.global.clmBtnEnabled = true
-    end
-    if self.db.global.clmBtnX == nil then
-        self.db.global.clmBtnX = 60
-    end
-    if self.db.global.clmBtnY == nil then
-        self.db.global.clmBtnY = -30
-    end
 end
 
 function CharacterLoadoutManager:OnEnable()

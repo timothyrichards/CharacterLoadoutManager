@@ -40,7 +40,7 @@ Now you can make multiple profiles and save your different loadouts to each of t
                 type = "toggle",
                 width = 1,
                 order = 4,
-                get = function(info) return self.db.global.clmBtnEnabled end,
+                get = function(info) return self:GetDefaultValue(self.db.global.clmBtnEnabled, true) end,
                 set = function(info,val) self.db.global.clmBtnEnabled = val end,
             },
             btnX = {
@@ -49,7 +49,7 @@ Now you can make multiple profiles and save your different loadouts to each of t
                 type = "input",
                 width = 0.5,
                 order = 5,
-                get = function(info) return self.db.global.clmBtnX end,
+                get = function(info) return self:GetDefaultValue(self.db.global.clmBtnX, 60) end,
                 set = function(info,val) self.db.global.clmBtnX = val, self.clmBtn.frame:SetPoint("TOPLEFT", "PaperDollFrame", "TOPLEFT", val, self.db.global.clmBtnY) end,
             },
             btnY = {
@@ -58,7 +58,7 @@ Now you can make multiple profiles and save your different loadouts to each of t
                 type = "input",
                 width = 0.5,
                 order = 6,
-                get = function(info) return self.db.global.clmBtnY end,
+                get = function(info) return self:GetDefaultValue(self.db.global.clmBtnY, -30) end,
                 set = function(info,val) self.db.global.clmBtnY = val, self.clmBtn.frame:SetPoint("TOPLEFT", "PaperDollFrame", "TOPLEFT", self.db.global.clmBtnX, val) end,
             },
         }
